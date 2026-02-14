@@ -1,0 +1,92 @@
+🔍 Mapeamento de Campos do ID Control
+
+🟢 CAMPOS PADRÃO (Disponíveis no cadastro):
+   - Ativacao (string): "13/02/2026 00:00"
+   - Validade (string): "13/02/2026 23:59"
+   - admin (boolean): false
+   - admissao (null): null
+   - admissionDate (null): null
+   - allowParkingSpotCompany (null): null
+   - availableCompanies (null): null
+   - availableGroupsVisitorsList (null): null
+   - availableResponsibles (null): null
+   - bairro (string): "CACHOEIRA"
+   - barras (string): ""
+   - blackList (boolean): false
+   - bornDate (null): null
+   - canUseFacial (boolean): true
+   - cards (Array[0]): []
+   - cargo (string): "Analista de Contas a Pagar Pl"
+   - cep (string): "02763000"
+   - cidade (string): "São Paulo"
+   - comments (string): ""
+   - contingency (boolean): true
+   - cpf (string): "03973435669"
+   - credits (null): null
+   - dataLastLog (string): "/Date(1771014042000-0300)/"
+   - dateLimit (string): "/Date(1771037999000-0300)/"
+   - dateStartLimit (string): "/Date(1770951600000-0300)/"
+   - deleted (boolean): false
+   - document (string): "RG: M8482134"
+   - dtAdmissao (string): ""
+   - dtNascimento (string): ""
+   - email (string): "bia.soares@hebraica.org.br"
+   - emailAcesso (string): ""
+   - endereco (string): "BRIGADEIRO VILELA JUNIOR_ 251"
+   - estadoCivil (string): ""
+   - expireOnDateLimit (boolean): false
+   - foto (string): "/9j/4AAQSkZJRgABAQEAYABgAAD/2wBDAAgGBgcGBQgHBwcJC...
+   - fotoDoc (null): null
+   - groups (Array[2]): [1023,2000]
+   - groupsList (Array[2]): [{"contingency":false,"controlVisitors":false,"dis...
+   - id (number): 10023165
+   - idArea (number): 1
+   - idDevice (number): 10093
+   - idResponsavel (null): null
+   - idType (number): 0
+   - inativo (boolean): false
+   - mae (string): ""
+   - nacionalidade (string): ""
+   - name (string): "Abilia Gomes Soares"
+   - nascimento (null): null
+   - naturalidade (string): ""
+   - objectGuid (null): null
+   - pai (string): ""
+   - password (string): ""
+   - phone (string): "1138596848"
+   - photoDeleted (boolean): false
+   - photoIdFaceState (number): 1
+   - photoTimestamp (number): 1771022610
+   - pis (number): 0
+   - pisAnterior (number): 0
+   - ramal (string): ""
+   - registration (string): "010093"
+   - responsavelNome (null): null
+   - rg (string): "M8482134"
+   - rulesList (Array[0]): []
+   - selectedGroupsVisitorsList (null): null
+   - selectedIdGroupsVisitorsList (null): null
+   - selectedIdResponsible (null): null
+   - selectedIdVisitedCompany (null): null
+   - selectedNameResponsible (null): null
+   - selectedResponsible (null): null
+   - selectedVisitedCompany (null): null
+   - senha (number): 0
+   - sexo (string): "Feminino"
+   - shelfLife (null): null
+   - shelfStartLife (null): null
+   - telefone (string): "1138596848"
+   - templates (Array[0]): []
+   - templatesImages (null): null
+   - templatesList (Array[0]): []
+   - templatesPanic (Array[0]): []
+   - templatesPanicImages (null): null
+   - templatesPanicList (Array[0]): []
+   - timeOfRegistration (string): "/Date(1771033410000-0300)/"
+   - userGroupsList (Array[2]): [{"id":165733,"idGroup":1023,"idUser":10023165,"is...
+   - veiculo_cor (null): null
+   - veiculo_marca (null): null
+   - veiculo_modelo (null): null
+   - veiculo_placa (null): null
+   - visitorCompany (null): null
+
