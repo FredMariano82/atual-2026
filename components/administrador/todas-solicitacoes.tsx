@@ -1118,8 +1118,16 @@ export default function TodasSolicitacoes() {
                                 <Button
                                   onClick={() => handleConfirmarCadastro(solicitacao, prestador)}
                                   size="sm"
-                                  className="bg-green-600 hover:bg-green-700 text-white h-7 w-7 p-0"
-                                  title="Aprovar liberação"
+                                  disabled={!((prestador.status as string) === "aprovado" || prestador.status === "aprovada")}
+                                  className={`h-7 w-7 p-0 text-white ${!((prestador.status as string) === "aprovado" || prestador.status === "aprovada")
+                                      ? "bg-green-600 opacity-40 cursor-not-allowed"
+                                      : "bg-green-600 hover:bg-green-700"
+                                    }`}
+                                  title={
+                                    !((prestador.status as string) === "aprovado" || prestador.status === "aprovada")
+                                      ? "Checagem precisa estar Aprovada para liberar"
+                                      : "Aprovar liberação"
+                                  }
                                 >
                                   <CheckCircle className="h-4 w-4" />
                                 </Button>
@@ -1129,8 +1137,16 @@ export default function TodasSolicitacoes() {
                                   onClick={() => handleNegarClick(solicitacao, prestador)}
                                   variant="outline"
                                   size="sm"
-                                  className="h-7 w-7 p-0 border-red-600 text-red-600 hover:bg-red-50"
-                                  title="Negar liberação"
+                                  disabled={!((prestador.status as string) === "aprovado" || prestador.status === "aprovada")}
+                                  className={`h-7 w-7 p-0 border-red-600 text-red-600 ${!((prestador.status as string) === "aprovado" || prestador.status === "aprovada")
+                                      ? "opacity-40 cursor-not-allowed"
+                                      : "hover:bg-red-50"
+                                    }`}
+                                  title={
+                                    !((prestador.status as string) === "aprovado" || prestador.status === "aprovada")
+                                      ? "Checagem precisa estar Aprovada para negar"
+                                      : "Negar liberação"
+                                  }
                                 >
                                   <XCircle className="h-4 w-4" />
                                 </Button>
