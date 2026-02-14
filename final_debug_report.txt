@@ -1,0 +1,21 @@
+
+🧪 Testando [POST] 'comments' com valor: TesteComentario_1771058266638 (String Comentário)
+   ✅ Request enviado (HTTP 200).
+   🔎 Valor lido 'comments': [checagem válida até 14/08/2026]
+   ⭐⭐⭐ UPDATE SUCESSO! ⭐⭐⭐
+
+🧪 Testando [POST] 'Validade' com valor: 31/12/2026 (dd/mm/yyyy)
+   ✅ Request enviado (HTTP 200).
+   🔎 Valor lido 'Validade': []
+
+🧪 Testando [POST] 'Validade' com valor: 2026-12-31 (YYYY-MM-DD)
+   ✅ Request enviado (HTTP 200).
+   🔎 Valor lido 'Validade': []
+
+🧪 Testando [POST] 'shelfLife' com valor: /Date(1834130268263-0300)/ (Timestamp)
+   ✅ Request enviado (HTTP 200).
+   🔎 Valor lido 'shelfLife': [null]
+
+🧪 Testando [POST] 'dateLimit' com valor: /Date(1834130268263-0300)/ (Timestamp Context)
+   ✅ Request enviado (HTTP 200).
+   🔎 Valor lido 'dateLimit': [null]

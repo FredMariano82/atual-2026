@@ -1,0 +1,11 @@
+ID       | RG           | Nome
+---------|--------------|-----------------------------------
+10023166 | 123456       | Marcus Marcus Marcus
+10010787 | 206741712    | Marcus Vinicius Aranha Cosendey
+10007367 | 470436335    | Marcus Vinicius Da Cruz Santa Rosa
+10002763 | 491804519    | Marcus Vinicius da Silva Leite
+10019661 | 526049030    | Marcus Vinicius de Oliveira Silva
+10022489 | 56996        | Marcus Vinicius Mariano
+10012164 | 25789169     | Marcus Vinicius Moreira Zittei
+10004006 | 41506441     | MARCUS VINICIUS OLIVEIRA GAMA DE SILVA
+------------------------------------------------------------

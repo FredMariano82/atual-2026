@@ -1,0 +1,30 @@
+[GET] /api/users -> 404
+[GET] /api/user -> 405
+[GET] /api/users/list -> 404
+[POST] /api/users/list -> 405
+[POST] /api/user/list -> 200
+      ✅ JSON Válido. Array? true. Tamanho aprox: 8346
+      🎯 ACHAMOS! Exemplo: {"admin":"Não","blackList":"Não","cargo":null,"cpf":null,"dateLimit":"/Date(1760410799000-0300)/","e
+[GET] /api/users/getAll -> 404
+[POST] /api/users/search -> 405
+[POST] /api/search/users -> 405
+[GET] /api/users -> 404
+[GET] /api/user -> 405
+[GET] /api/users/list -> 404
+[POST] /api/users/list -> 405
+[POST] /api/user/list -> 200
+      ✅ JSON Válido. Array? true. Tamanho aprox: 8346
+      🎯 ACHAMOS! Exemplo: {"admin":"Não","blackList":"Não","cargo":null,"cpf":null,"dateLimit":"/Date(1760410799000-0300)/","e
+[GET] /api/users/getAll -> 404
+[POST] /api/users/search -> 405
+[POST] /api/search/users -> 405
+[GET] /api/users -> 404
+[GET] /api/user -> 405
+[GET] /api/users/list -> 404
+[POST] /api/users/list -> 405
+[POST] /api/user/list -> 200
+      ✅ JSON Válido. Array? true. Tamanho aprox: 8346
+      🎯 ACHAMOS! Exemplo: {"admin":"Não","blackList":"Não","cargo":null,"cpf":null,"dateLimit":"/Date(1760410799000-0300)/","e
+[GET] /api/users/getAll -> 404
+[POST] /api/users/search -> 405
+[POST] /api/search/users -> 405

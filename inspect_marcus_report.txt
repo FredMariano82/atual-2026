@@ -1,0 +1,9 @@
+
+DATA REPORT FOR MARCUS (ID 10023166):
+--------------------------------------------------
+dateStartLimit:    null
+dateLimit:         null
+expireOnDateLimit: false
+useDateLimit:      undefined
+inativo:           false
+--------------------------------------------------

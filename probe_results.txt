@@ -1,0 +1,16 @@
+[undefined] /api/users -> 404
+[undefined] /api/user -> 405
+[undefined] /api/users/list -> 404
+[undefined] /api/users/list -> ERRO: Request with GET/HEAD method cannot have body.
+[undefined] /api/user/list -> ERRO: Request with GET/HEAD method cannot have body.
+[undefined] /api/users/getAll -> 404
+[undefined] /api/users/search -> ERRO: Request with GET/HEAD method cannot have body.
+[undefined] /api/search/users -> ERRO: Request with GET/HEAD method cannot have body.
+[undefined] /api/users -> 404
+[undefined] /api/user -> 405
+[undefined] /api/users/list -> 404
+[undefined] /api/users/list -> ERRO: Request with GET/HEAD method cannot have body.
+[undefined] /api/user/list -> ERRO: Request with GET/HEAD method cannot have body.
+[undefined] /api/users/getAll -> 404
+[undefined] /api/users/search -> ERRO: Request with GET/HEAD method cannot have body.
+[undefined] /api/search/users -> ERRO: Request with GET/HEAD method cannot have body.
