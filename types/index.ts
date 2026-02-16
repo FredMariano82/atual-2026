@@ -3,6 +3,7 @@ export interface Usuario {
   nome: string
   email: string
   departamento: string
+  departamento_id?: number // PRODUÇÃO REAL: ID departamento para relação interna
   perfil: "solicitante" | "aprovador" | "administrador" | "gestor" | "recepcao" | "suporte" | "superadmin"
 }
 
@@ -39,6 +40,7 @@ export interface Solicitacao {
   numero: string
   solicitante: string
   departamento: string
+  departamento_id?: number // PRODUÇÃO REAL: ID do departamento
   dataSolicitacao: string
   horaSolicitacao: string
   tipoSolicitacao: "checagem_liberacao" | "somente_liberacao"

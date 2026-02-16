@@ -119,14 +119,14 @@ export default function LoginForm() {
             <form onSubmit={handleLogin} className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="email" className="text-sm font-medium text-slate-700">
-                  Email
+                  Usuário
                 </Label>
                 <Input
                   id="email"
-                  type="email"
+                  type="text"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="Digite seu email"
+                  placeholder="Digite seu usuário"
                   required
                   className="h-12 border-2 border-slate-200 focus:border-blue-500 focus:ring-blue-500 rounded-lg"
                 />
@@ -212,14 +212,14 @@ export default function LoginForm() {
             <form onSubmit={handleTrocarSenha} className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="emailTroca" className="text-sm font-medium">
-                  Email
+                  Usuário
                 </Label>
                 <Input
                   id="emailTroca"
-                  type="email"
+                  type="text"
                   value={emailTroca}
                   onChange={(e) => setEmailTroca(e.target.value)}
-                  placeholder="Digite seu email"
+                  placeholder="Digite seu usuário"
                   required
                 />
               </div>

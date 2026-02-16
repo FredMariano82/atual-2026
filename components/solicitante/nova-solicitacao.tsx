@@ -527,6 +527,7 @@ export default function NovaSolicitacao({
       } = await SolicitacoesService.criarSolicitacao({
         solicitante: usuario.nome,
         departamento: usuario.departamento,
+        departamentoId: usuario.departamento_id, // ADDED
         usuarioId: usuario.id,
         tipoSolicitacao: "checagem_liberacao",
         finalidade,

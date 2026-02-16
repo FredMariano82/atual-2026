@@ -11,7 +11,7 @@ export class AuthService {
       const { data: usuario, error: userError } = await supabase
         .from("usuarios")
         .select("*")
-        .eq("email", email)
+        .ilike("email", email) // Case insensitive
         .single()
 
       if (userError || !usuario) {
@@ -34,6 +34,7 @@ export class AuthService {
           nome: usuario.nome,
           email: usuario.email,
           departamento: usuario.departamento,
+          departamento_id: usuario.departamento_id,
           perfil: usuario.perfil as "solicitante" | "aprovador" | "administrador" | "gestor" | "recepcao" | "suporte",
         },
         erro: "",
@@ -96,6 +97,7 @@ export class AuthService {
         nome: usuario.nome,
         email: usuario.email,
         departamento: usuario.departamento,
+        departamento_id: usuario.departamento_id,
         perfil: usuario.perfil as "solicitante" | "aprovador" | "administrador" | "gestor" | "recepcao" | "suporte",
       }
     } catch (error) {
@@ -109,6 +111,7 @@ export class AuthService {
     nome: string
     email: string
     departamento: string
+    departamento_id?: number // Adicionado
     perfil: "solicitante" | "aprovador" | "administrador" | "gestor" | "recepcao" | "suporte"
   }): Promise<{ sucesso: boolean; erro: string; usuario?: Usuario }> {
     try {
@@ -127,6 +130,7 @@ export class AuthService {
           nome: usuario.nome,
           email: usuario.email,
           departamento: usuario.departamento,
+          departamento_id: usuario.departamento_id,
           perfil: usuario.perfil as "solicitante" | "aprovador" | "administrador" | "gestor" | "recepcao" | "suporte",
         },
       }

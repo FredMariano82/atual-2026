@@ -7,6 +7,7 @@ export class SolicitacoesService {
     solicitante: string
     departamento: string
     usuarioId: string
+    departamentoId?: number // Novo campo
     tipoSolicitacao: "checagem_liberacao" | "somente_liberacao"
     finalidade: "evento" | "obra"
     local: string
@@ -80,6 +81,7 @@ export class SolicitacoesService {
               numero: numeroSolicitacao,
               solicitante: dados.solicitante,
               departamento: dados.departamento,
+              departamento_id: dados.departamentoId, // NOVO CAMPO
               usuario_id: dados.usuarioId,
               data_solicitacao: agora.toISOString().split("T")[0],
               hora_solicitacao: agora.toTimeString().split(" ")[0],
@@ -192,7 +194,9 @@ export class SolicitacoesService {
         id: solicitacao.id,
         numero: solicitacao.numero,
         solicitante: solicitacao.solicitante,
+        solicitante: solicitacao.solicitante,
         departamento: solicitacao.departamento,
+        departamento_id: solicitacao.departamento_id, // MAPPED
         dataSolicitacao: new Date(solicitacao.data_solicitacao + "T00:00:00").toLocaleDateString("pt-BR"),
         horaSolicitacao: solicitacao.hora_solicitacao,
         tipoSolicitacao: solicitacao.tipo_solicitacao,
@@ -299,7 +303,9 @@ export class SolicitacoesService {
         id: s.id,
         numero: s.numero,
         solicitante: s.solicitante,
+        solicitante: s.solicitante,
         departamento: s.departamento,
+        departamento_id: s.departamento_id, // MAPPED
         dataSolicitacao: new Date(s.data_solicitacao + "T00:00:00").toLocaleDateString("pt-BR"),
         horaSolicitacao: s.hora_solicitacao,
         tipoSolicitacao: s.tipo_solicitacao,
