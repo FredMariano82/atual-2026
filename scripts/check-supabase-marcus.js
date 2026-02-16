@@ -1,39 +1,50 @@
 
-// Script para ler dados do Marcus no Supabase
 require('dotenv').config({ path: '.env.local' });
 const { createClient } = require('@supabase/supabase-js');
 
 const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY);
 
-async function run() {
-    console.log("🔍 Buscando Marcus (10023166) no Supabase...");
+async function checkMarcusSupabase() {
+    console.log("🔍 Verificando datas do Marcus no Supabase...");
 
-    // Buscar pelo ID Control ou pelo nome
-    const { data: p, error } = await supabase
+    // Buscar pelo Marcus
+    const { data, error } = await supabase
         .from('prestadores')
         .select(`
-            id, nome, documento, status, empresa, checagem_valida_ate,
-            id_control_id, integrado_id_control,
-            solicitacoes ( data_inicial, data_final )
+            id,
+            nome,
+            solicitacao_id,
+            solicitacoes:solicitacao_id (
+                *
+            )
         `)
-        .eq('id_control_id', 10023166)
-        .single();
+        .ilike('nome', '%Marcus Marcus Marcus%');
 
-    if (error) return console.error("Erro Supabase:", error);
+    if (error) {
+        console.error("❌ Erro:", error.message);
+        return;
+    }
 
-    if (p) {
-        console.log("\n========================================");
-        console.log(`Nome:      ${p.nome}`);
-        console.log(`Validade:  ${p.checagem_valida_ate}`);
-        if (p.solicitacoes) {
-            const sol = Array.isArray(p.solicitacoes) ? p.solicitacoes[0] : p.solicitacoes;
-            console.log(`Data Ini:  ${sol?.data_inicial}`);
-            console.log(`Data Fim:  ${sol?.data_final}`);
-        }
-        console.log("========================================");
+    if (!data || data.length === 0) {
+        console.log("⚠️ Marcus não encontrado no Supabase.");
+        return;
+    }
+
+    const marcus = data[0];
+    console.log(`\n📋 Registro Encontrado: ${marcus.nome}`);
+    console.log(`   ID Supabase: ${marcus.id}`);
+
+    if (marcus.solicitacoes) {
+        console.log(`   📅 Data Inicial: ${marcus.solicitacoes.data_inicial}`);
+        console.log(`   📅 Data Final:   ${marcus.solicitacoes.data_final}`);
+        console.log(`   ℹ️ Status:       ${marcus.solicitacoes.status}`);
+
+        // Verificação extra do tipo/raw
+        console.log(`\n   🛠️ RAW (JSON):`);
+        console.log(JSON.stringify(marcus.solicitacoes, null, 2));
     } else {
-        console.log("Prestador não encontrado.");
+        console.log("⚠️ Sem solicitação vinculada (datas vazias).");
     }
 }
 
-run();
+checkMarcusSupabase();

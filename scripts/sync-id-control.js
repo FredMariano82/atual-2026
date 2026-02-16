@@ -1,4 +1,5 @@
-// 🔄 Sincronizador Supabase -> ID Control (Soberania do Supabase)
+
+// 🔄 Sincronizador Supabase -> ID Control (Versão Final: Criação s/ ID, newID, Obs e Datas)
 // Executar: node scripts/sync-id-control.js
 
 require('dotenv').config({ path: '.env.local' });
@@ -6,7 +7,7 @@ const { createClient } = require('@supabase/supabase-js');
 
 // Configurações
 const ID_CONTROL_URL = "https://192.168.100.20:30443";
-const CHECK_INTERVAL_MS = 1 * 60 * 1000; // 1 minuto para ser ágil
+const CHECK_INTERVAL_MS = 60 * 1000; // 1 minuto
 const ID_CONTROL_USER = "mariano";
 const ID_CONTROL_PASS = "hebraica";
 
@@ -41,8 +42,6 @@ async function buscarUsuarioIdControl(documento) {
     if (!sessionToken && !await loginIdControl()) return null;
     try {
         const docLimpo = documento.replace(/[^0-9]/g, "");
-        // TENTA BUSCA EXATA (ajustar conforme API real)
-        // Se a API suportar query params:
         const response = await fetch(`${ID_CONTROL_URL}/api/users?rg=${docLimpo}`, {
             headers: { "Authorization": `Bearer ${sessionToken}` }
         });
@@ -53,148 +52,176 @@ async function buscarUsuarioIdControl(documento) {
             if (data.id) return data;
         }
     } catch (e) {
-        console.error("⚠️ Erro na busca:", e.message);
+        // Ignora erro se não achar
     }
     return null;
 }
 
-async function criarUsuarioIdControl(prestador) {
-    if (!sessionToken) await loginIdControl();
-
-    // MAPEAMENTO INICIAL (Será refinado com o usuário)
-    const payload = {
-        name: prestador.nome,
-        rg: prestador.documento.replace(/[^0-9]/g, ""),
-        begin_time: prestador.data_inicial,
-        end_time: prestador.data_final
-    };
-
-    console.log("   📤 Payload Criação:", payload);
-
-    const response = await fetch(`${ID_CONTROL_URL}/api/user/`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json", "Authorization": `Bearer ${sessionToken}` },
-        body: JSON.stringify(payload)
-    });
-
-    if (response.ok) return await response.json();
-    throw new Error(await response.text());
+// FORMATO F12: DD/MM/YYYY HH:mm
+function formatDateF12(dateStr, isStart) {
+    if (!dateStr) return "";
+    const d = new Date(dateStr);
+    const day = String(d.getUTCDate()).padStart(2, '0');
+    const month = String(d.getUTCMonth() + 1).padStart(2, '0');
+    const year = d.getUTCFullYear();
+    const time = "00:00";
+    return `${day}/${month}/${year} ${time}`;
 }
 
-async function atualizarUsuarioIdControl(idControlId, prestador) {
+async function upsertUsuarioIdControl(prestador, usuarioExistente) {
     if (!sessionToken) await loginIdControl();
 
-    // IMPOSIÇÃO DAS DATAS DO SUPABASE
+    // 1. Preparar Datas e Dados
+    const sol = Array.isArray(prestador.solicitacoes) ? prestador.solicitacoes[0] : prestador.solicitacoes;
+    const shelfStart = formatDateF12(sol?.data_inicial, true);
+    const shelfEnd = formatDateF12(sol?.data_final, false);
+
+    // Mapeamento de observação
+    const comments = prestador.observacoes || "";
+
+    console.log(`   📅 Datas: [${shelfStart}] -> [${shelfEnd}] | Obs: [${comments}]`);
+
+    // 2. Montar Payload (Idêntico ao F12)
+    const id = usuarioExistente?.id || 0; // Se existe, pega ID. Se novo, 0 (mas removemos do payload abaixo).
+    const idDevice = usuarioExistente?.idDevice || 0; // Mantém se existir.
+
     const payload = {
+        // id: id, // <--- REMOVIDO PARA CRIAÇÃO (Adicionado só se > 0 no final)
+        idDevice: idDevice,
         name: prestador.nome,
-        begin_time: prestador.data_inicial,
-        end_time: prestador.data_final
+        rg: prestador.documento.replace(/[^0-9]/g, ""),
+        document: `RG: ${prestador.documento.replace(/[^0-9]/g, "")}`,
+
+        // Datas
+        shelfStartLife: shelfStart,
+        shelfLife: shelfEnd,
+        shelfStartLifeDate: shelfStart.split(' ')[0],
+        shelfLifeDate: shelfEnd.split(' ')[0],
+
+        // Outros
+        // Outros
+        // timeOfRegistration: `/Date(${Date.now()}-0300)/`, // REMOVIDO PARA CRIAÇÃO (F12 não manda)
+        comments: comments,
+        customFields: {},
+        templates: [],
+        cards: [],
+        groups: [],
+        userGroupsList: [],
+        deleted: false,
+        inativo: false,
+        Ativacao: "", Validade: "", password: "", password_confirmation: "",
+        pis: 0,
+        foto: null, fotoDoc: null
     };
 
-    console.log("   📤 Payload Atualização (Datas):", payload);
+    // Só incluir ID se for UPDATE
+    if (id > 0) {
+        payload.id = id;
+    }
 
-    const response = await fetch(`${ID_CONTROL_URL}/api/user/${idControlId}`, {
-        method: "PUT",
+    // 3. Enviar
+    // F12 Creation usa POST sem ID. Update usa PUT com ID.
+    const method = id ? "PUT" : "POST";
+    const url = `${ID_CONTROL_URL}/api/user/`;
+
+    console.log(`   📤 Enviando (${method})...`);
+
+    const response = await fetch(url, {
+        method: method,
         headers: { "Content-Type": "application/json", "Authorization": `Bearer ${sessionToken}` },
         body: JSON.stringify(payload)
     });
 
-    if (response.ok) return await response.json();
-    throw new Error(await response.text());
+    if (response.ok) {
+        try {
+            return await response.json(); // Retorna { newID: ... } na criação
+        } catch (e) {
+            return { success: true, id: id };
+        }
+    }
+
+    const errText = await response.text();
+    throw new Error(`${response.status} - ${errText}`);
 }
 
 // ==========================================
-// 🚀 LÓGICA PRINCIPAL (Check-Then-Upsert)
+// 🚀 LÓGICA PRINCIPAL
 // ==========================================
 
 async function processarPendentes() {
-    // Busca prestadores aprovados e não integrados
+    console.log("🔍 Buscando pendentes (Ordenado por Criação)...");
+
+    // Ordenar por created_at DESC para pegar os novos (Ligia, etc)
     const { data: pendentes, error } = await supabase
         .from('prestadores')
         .select(`
-            id, nome, documento, status, 
+            id, nome, documento, status, observacoes, created_at,
             solicitacao_id, 
-            solicitacoes ( data_inicial, data_final )
+            solicitacoes:solicitacao_id ( data_inicial, data_final )
         `)
-        .eq('status', 'aprovada')
+        .eq('status', 'aprovado')
         .is('integrado_id_control', false)
-        .limit(5);
+        .order('created_at', { ascending: false })
+        .limit(50);
 
     if (error) {
-        console.error("❌ Erro ao buscar pendentes:", error.message);
+        console.error("❌ Erro BD:", error.message);
         return;
     }
 
     if (!pendentes || pendentes.length === 0) {
-        // console.log("💤 Nada para processar..."); 
+        // console.log("💤 Nada novo..."); 
         return;
     }
 
-    console.log(`📦 Processando ${pendentes.length} novos prestadores...`);
+    console.log(`📦 Processando ${pendentes.length} novos...`);
 
     for (const p of pendentes) {
-        console.log(`🔄 Prestador: ${p.nome} (${p.documento})`);
-
-        // Flattening das datas
-        // Se a solicitacao for array (join), pega o primeiro. Se for obj, pega direto.
-        const sol = Array.isArray(p.solicitacoes) ? p.solicitacoes[0] : p.solicitacoes;
-
-        // Formatar datas para ISO ou formato esperado pelo ID Control
-        // Assumindo que ID Control aceita ISO ou Timestamp
-        const dataInicial = sol?.data_inicial ? new Date(sol.data_inicial).getTime() / 1000 : null; // Exemplo Timestamp Unix
-        const dataFinal = sol?.data_final ? new Date(sol.data_final).getTime() / 1000 : null;
-
-        // Vamos usar formato string ISO por enquanto e ver o erro se der
-        const dadosEnvio = {
-            ...p,
-            // Converter para o formato que o ID Control espera (ajustaremos no passo de mapeamento)
-            // Por enquanto enviando string crua para debug
-            data_inicial: sol?.data_inicial,
-            data_final: sol?.data_final
-        };
-
         try {
-            // A. INVESTIGAÇÃO
+            console.log(`🔄 Prestador: ${p.nome} (${p.documento})`);
+
+            // 1. Verificar ID Control
             const usuarioExistente = await buscarUsuarioIdControl(p.documento);
             let idControlRemoto = null;
 
             if (usuarioExistente) {
-                console.log(`   ✅ Encontrado no ID Control: ID ${usuarioExistente.id}`);
+                console.log(`   ✅ Já existe: ID ${usuarioExistente.id}`);
                 idControlRemoto = usuarioExistente.id;
-
-                // B. ATUALIZAÇÃO SOBERANA
-                console.log(`   ✏️ Atualizando datas no ID Control...`);
-                await atualizarUsuarioIdControl(idControlRemoto, dadosEnvio);
-
             } else {
-                console.log(`   🆕 Não existe. Criando novo no ID Control...`);
-                // C. CRIAÇÃO
-                const novoUsuario = await criarUsuarioIdControl(dadosEnvio);
-                idControlRemoto = novoUsuario.id; // Ajustar conforme retorno da API
+                console.log(`   🆕 Não existe. Criando...`);
             }
 
-            // D. VÍNCULO NO SUPABASE
-            if (idControlRemoto) {
-                const { error: updateError } = await supabase
-                    .from('prestadores')
-                    .update({
-                        integrado_id_control: true,
-                        id_control_id: idControlRemoto,
-                        data_integracao: new Date()
-                    })
-                    .eq('id', p.id);
+            // 2. UPSERT
+            const resultado = await upsertUsuarioIdControl(p, usuarioExistente);
 
-                if (updateError) throw updateError;
-                console.log(`   🏁 Sucesso! Vinculado ao ID ${idControlRemoto}`);
+            // CAPTURA DO O ID (Pode ser .newID na criação ou .id no update)
+            const novoId = resultado.newID || resultado.id;
+
+            if (!idControlRemoto && novoId) {
+                idControlRemoto = novoId;
+                console.log(`   ✨ Novo ID Gerado: ${idControlRemoto}`);
             }
+
+            // 3. Atualizar Supabase e gravar o ID correto
+            console.log(`   🏁 Atualizando Supabase...`);
+            const { error: updateError } = await supabase
+                .from('prestadores')
+                .update({
+                    integrado_id_control: true,
+                    id_control_id: idControlRemoto || 0,
+                    data_integracao: new Date()
+                })
+                .eq('id', p.id);
+
+            if (updateError) throw updateError;
+            console.log(`   ✅ Sincronizado com Sucesso!`);
 
         } catch (err) {
-            console.error(`   ❌ Falha no processamento:`, err.message);
+            console.error(`   ❌ Falha:`, err.message);
         }
     }
 }
 
-// Loop
-console.log("🚀 Monitor de Sincronia Iniciado (Modo: Soberania Supabase)");
+console.log("🚀 Monitor Final Iniciado");
 setInterval(processarPendentes, CHECK_INTERVAL_MS);
-processarPendentes(); // Executa 1x imediatamente
+processarPendentes(); 
