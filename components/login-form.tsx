@@ -110,7 +110,7 @@ export default function LoginForm() {
           <CardHeader className="space-y-6 pb-6">
             <div className="text-center">
               <div className="flex justify-center mb-6">
-                <img src="/images/mvm-logo-new.png" alt="MVM Solutions" className="h-24 w-auto" />
+                <img src="/images/mvm-solutions-logo.png" alt="MVM Solutions" className="h-24 w-auto" />
               </div>
               <div className="w-24 h-1 bg-gradient-to-r from-blue-400 to-cyan-400 mx-auto rounded-full"></div>
             </div>
