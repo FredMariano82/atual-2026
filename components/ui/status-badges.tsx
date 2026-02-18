@@ -49,6 +49,7 @@ export function StatusChecagemBadge({ status }: { status: StatusChecagem }) {
     reprovada: "bg-red-100 text-red-800 border-red-200",
     vencida: "bg-gray-100 text-gray-800 border-gray-200",
     excecao: "bg-purple-100 text-purple-800 border-purple-200",
+    erro_rg: "bg-orange-100 text-orange-800 border-orange-200", // 🆕 NOVO STATUS
   }
 
   const labels = {
@@ -57,6 +58,7 @@ export function StatusChecagemBadge({ status }: { status: StatusChecagem }) {
     reprovada: "Reprovada",
     vencida: "Vencida",
     excecao: "Exceção",
+    erro_rg: "Erro RG", // 🆕 NOVO STATUS
   }
 
   // Normalizar o status para garantir compatibilidade
@@ -73,7 +75,7 @@ export function StatusChecagemBadge({ status }: { status: StatusChecagem }) {
 // Componentes de Badge para Cadastro (Liberação)
 export function StatusCadastroBadge({ status }: { status: StatusCadastro }) {
   // CORREÇÃO: Normalizar status para maiúsculo se necessário
-  const normalizedStatus = status === "ok" ? "Ok" : status === "não ok" ? "Não Ok" : status
+  const normalizedStatus = (status as string) === "ok" ? "Ok" : (status as string) === "não ok" ? "Não Ok" : status
 
   const variants = {
     Ok: "bg-green-100 text-green-800 border-green-200",
@@ -81,7 +83,7 @@ export function StatusCadastroBadge({ status }: { status: StatusCadastro }) {
     pendente: "bg-yellow-100 text-yellow-800 border-yellow-200",
     urgente: "bg-red-100 text-red-800 border-red-200",
     vencida: "bg-gray-100 text-gray-800 border-gray-200",
-    negada: "bg-red-100 text-red-800 border-red-200", // 🆕 NOVO STATUS
+    negada: "bg-red-100 text-red-800 border-red-200",
   }
 
   const labels = {
@@ -90,7 +92,7 @@ export function StatusCadastroBadge({ status }: { status: StatusCadastro }) {
     pendente: "Pendente",
     urgente: "Urgente",
     vencida: "Vencida",
-    negada: "Negada", // 🆕 NOVO STATUS
+    negada: "Negada",
   }
 
   return (
@@ -104,7 +106,7 @@ export function StatusCadastroBadge({ status }: { status: StatusCadastro }) {
 export function StatusChecagemIcon({ status }: { status: StatusChecagem }) {
   // Normalizar o status para garantir compatibilidade
   const normalizedStatus =
-    status === "aprovado" ? "aprovada" : status === "reprovado" ? "reprovada" : (status as StatusChecagem)
+    (status as string) === "aprovado" ? "aprovada" : (status as string) === "reprovado" ? "reprovada" : (status as StatusChecagem)
 
   const icons = {
     pendente: <Clock className="h-4 w-4 text-yellow-600" />,
@@ -112,6 +114,7 @@ export function StatusChecagemIcon({ status }: { status: StatusChecagem }) {
     reprovada: <XCircle className="h-4 w-4 text-red-600" />,
     vencida: <AlertTriangle className="h-4 w-4 text-gray-600" />,
     excecao: <ShieldAlert className="h-4 w-4 text-purple-600" />,
+    erro_rg: <ShieldAlert className="h-4 w-4 text-orange-600" />, // 🆕 NOVO STATUS
   }
 
   return icons[normalizedStatus]
@@ -120,7 +123,7 @@ export function StatusChecagemIcon({ status }: { status: StatusChecagem }) {
 // Componentes de Ícone para Cadastro (Liberação)
 export function StatusCadastroIcon({ status }: { status: StatusCadastro }) {
   // CORREÇÃO: Normalizar status para maiúsculo se necessário
-  const normalizedStatus = status === "ok" ? "Ok" : status === "não ok" ? "Não Ok" : status
+  const normalizedStatus = (status as string) === "ok" ? "Ok" : (status as string) === "não ok" ? "Não Ok" : status
 
   const icons = {
     Ok: <CheckCircle className="h-4 w-4 text-green-600" />,

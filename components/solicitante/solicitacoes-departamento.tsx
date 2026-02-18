@@ -41,7 +41,8 @@ import { isAccessExpiringSoon } from "../../utils/status-helpers"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { getSolicitacoesByDepartamento } from "../../services/solicitacoes-service"
 import { formatarDataParaBR } from "../../utils/date-helpers"
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog"
+import { supabase } from "@/lib/supabase"
 
 // Definir todas as colunas disponíveis para o Solicitante
 const COLUNAS_DISPONIVEIS = [
@@ -85,6 +86,62 @@ export default function SolicitacoesDepartamento() {
 
   // Estados para configuração de colunas
   const [modalColunasAberto, setModalColunasAberto] = useState(false)
+  const [modalObservacoesAberto, setModalObservacoesAberto] = useState(false)
+
+  // 🆕 Estado para Modal de Edição (Correção)
+  const [modalEdicaoAberto, setModalEdicaoAberto] = useState(false)
+  const [dadosEdicao, setDadosEdicao] = useState({ documento: "", documento2: "" })
+  const [salvandoEdicao, setSalvandoEdicao] = useState(false)
+  const [mensagemSucesso, setMensagemSucesso] = useState<string | null>(null)
+
+  const handleAbrirEdicao = () => {
+    if (prestadorSelecionado) {
+      setDadosEdicao({
+        documento: prestadorSelecionado.prestador.documento || "",
+        documento2: prestadorSelecionado.prestador.documento2 || "",
+      })
+      setModalEdicaoAberto(true)
+    }
+  }
+
+  const handleSalvarEdicao = async () => {
+    if (!prestadorSelecionado) return
+    setSalvandoEdicao(true)
+
+    try {
+      const { error } = await supabase
+        .from("prestadores")
+        .update({
+          documento: dadosEdicao.documento,
+          documento2: dadosEdicao.documento2,
+          status: "pendente", // Resetar status checagem
+          cadastro: "pendente", // Resetar status liberação
+          observacoes: null, // Limpar observações de erro
+        })
+        .eq("id", prestadorSelecionado.prestador.id)
+
+      if (error) throw error
+
+      setMensagemSucesso("Dados corrigidos com sucesso! A solicitação foi reenviada para análise.")
+      setModalEdicaoAberto(false)
+      // setPopoverAberto(null) // Fechar modal de detalhes - This variable is not defined in the current scope.
+
+      // Atualizar lista
+      // const { data } = await getSolicitacoesByDepartamento(user?.department || "") // 'user' is not defined, should be 'usuario'. 'department' is not a property of 'usuario', it's 'departamento'.
+      // setSolicitacoes(data || []) // 'setSolicitacoes' is not defined, should be 'setSolicitacoesReais'.
+      // setDadosFiltrados(data || []) // 'setDadosFiltrados' is not defined.
+
+      // Corrected logic for updating list:
+      await buscarSolicitacoesDepartamento(); // Re-fetch all data
+      setPrestadorSelecionado(null); // Clear selected prestador after successful edit
+
+    } catch (error) {
+      console.error("Erro ao salvar edição:", error)
+      alert("Erro ao salvar alterações. Tente novamente.")
+    } finally {
+      setSalvandoEdicao(false)
+    }
+  }
   const [carregandoDownload, setCarregandoDownload] = useState(false)
   const [colunasVisiveis, setColunasVisiveis] = useState<Record<string, boolean>>(() => {
     // Tentar carregar do localStorage
@@ -939,8 +996,11 @@ export default function SolicitacoesDepartamento() {
                               size="sm"
                               variant="outline"
                               onClick={() => handleVisualizarSolicitacao(solicitacao, prestador)}
-                              className="h-7 w-7 p-0"
-                              title="Visualizar detalhes"
+                              className={`h-7 w-7 p-0 ${prestador.status === "reprovado"
+                                ? "text-red-600 border-red-200 bg-red-50 animate-pulse hover:bg-red-100"
+                                : ""
+                                }`}
+                              title={prestador.status === "reprovado" ? "Ver motivo da devolução" : "Visualizar detalhes"}
                             >
                               <Eye className="h-4 w-4" />
                             </Button>
@@ -960,13 +1020,11 @@ export default function SolicitacoesDepartamento() {
                           </div>
                         </TableCell>
                         {colunasVisiveis.observacoes && (
-                          <TableCell className="text-sm text-center max-w-[200px]">
-                            {prestador.observacoes ? (
-                              <div className="text-xs text-red-600 bg-red-50 p-2 rounded border border-red-200 whitespace-pre-wrap break-words">
-                                {prestador.observacoes}
-                              </div>
+                          <TableCell className="p-4 align-middle text-sm text-slate-600 max-w-[200px] truncate" title={prestador.observacoes}>
+                            {prestador.observacoes?.includes('[ERRO RG]') ? (
+                              <span className="text-slate-400 italic">Em análise (Validando documento)</span>
                             ) : (
-                              <span className="text-slate-400">-</span>
+                              prestador.observacoes || "-"
                             )}
                           </TableCell>
                         )}
@@ -1086,8 +1144,61 @@ export default function SolicitacoesDepartamento() {
                   <StatusChecagemBadge status={getChecagemStatus(prestadorSelecionado.prestador)} />
                 </div>
               </div>
+
+              {prestadorSelecionado.prestador.observacoes && (
+                <div>
+                  <h4 className="font-semibold">Observações / Justificativa:</h4>
+                  <p className="p-3 bg-slate-50 rounded-md border text-sm text-slate-700 whitespace-pre-wrap">
+                    {prestadorSelecionado.prestador.observacoes.includes('[ERRO RG]')
+                      ? "Em análise (Validando documento)"
+                      : prestadorSelecionado.prestador.observacoes}
+                  </p>
+
+                  {/* Botão de Correção para Reprovados */}
+                  {prestadorSelecionado.prestador.status === 'reprovado' && (
+                    <div className="mt-3 flex justify-end">
+                      <Button onClick={handleAbrirEdicao} className="bg-blue-600 hover:bg-blue-700 text-white">
+                        Corrigir Documentos
+                      </Button>
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
           )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Modal de Edição (Correção) */}
+      <Dialog open={modalEdicaoAberto} onOpenChange={setModalEdicaoAberto}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Corrigir Documentos</DialogTitle>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="grid gap-2">
+              <Label htmlFor="doc1">Doc 1 (RG, RNE, Passaporte)</Label>
+              <Input
+                id="doc1"
+                value={dadosEdicao.documento}
+                onChange={(e) => setDadosEdicao({ ...dadosEdicao, documento: e.target.value })}
+              />
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="doc2">Doc 2 (CPF, CNH)</Label>
+              <Input
+                id="doc2"
+                value={dadosEdicao.documento2}
+                onChange={(e) => setDadosEdicao({ ...dadosEdicao, documento2: e.target.value })}
+              />
+            </div>
+          </div>
+          <div className="flex justify-end gap-2">
+            <Button variant="outline" onClick={() => setModalEdicaoAberto(false)}>Cancelar</Button>
+            <Button onClick={handleSalvarEdicao} disabled={salvandoEdicao}>
+              {salvandoEdicao ? "Salvando..." : "Salvar e Reenviar"}
+            </Button>
+          </div>
         </DialogContent>
       </Dialog>
     </div>

@@ -396,10 +396,17 @@ export default function TodasSolicitacoes() {
     setMensagemSucesso(null)
   }
 
-  // 🆕 Função para abrir modal de observações (Negado)
+  // 🆕 Função para abrir modal de observações (Negado ou Devolver)
   const handleNegarClick = (solicitacao: Solicitacao, prestador: PrestadorAvaliacao) => {
     setPrestadorSelecionado({ solicitacao, prestador })
-    setObservacoes("")
+
+    // Se for erro de RG, já preenche a observação para facilitar
+    if (prestador.status === "erro_rg" || (prestador.status === "reprovado" && prestador.observacoes?.includes('[ERRO RG]'))) {
+      setObservacoes("Devolvido para correção: Documento informado não pertence a esta pessoa. Favor verificar.")
+    } else {
+      setObservacoes("")
+    }
+
     setModalObservacoesAberto(true)
   }
 
@@ -1097,6 +1104,12 @@ export default function TodasSolicitacoes() {
                                     <Badge className="bg-purple-100 text-purple-800 border-purple-200">Exceção</Badge>
                                   </>
                                 )}
+                                {prestador.status === "erro_rg" && (
+                                  <>
+                                    <ShieldAlert className="h-4 w-4 text-orange-600" />
+                                    <Badge className="bg-orange-100 text-orange-800 border-orange-200">Erro RG</Badge>
+                                  </>
+                                )}
                               </div>
                             )}
                           </td>
@@ -1112,50 +1125,63 @@ export default function TodasSolicitacoes() {
                         )}
                         {colunasVisiveis.acoes && (
                           <td className="p-4 align-middle relative">
-                            {statusLiberacao === "pendente" || statusLiberacao === "urgente" ? (
-                              <div className="flex items-center justify-center gap-2">
-                                {/* Botão Aprovar (Verde) */}
-                                <Button
-                                  onClick={() => handleConfirmarCadastro(solicitacao, prestador)}
-                                  size="sm"
-                                  disabled={!((prestador.status as string) === "aprovado" || prestador.status === "aprovada")}
-                                  className={`h-7 w-7 p-0 text-white ${!((prestador.status as string) === "aprovado" || prestador.status === "aprovada")
-                                      ? "bg-green-600 opacity-40 cursor-not-allowed"
-                                      : "bg-green-600 hover:bg-green-700"
-                                    }`}
-                                  title={
-                                    !((prestador.status as string) === "aprovado" || prestador.status === "aprovada")
-                                      ? "Checagem precisa estar Aprovada para liberar"
-                                      : "Aprovar liberação"
-                                  }
-                                >
-                                  <CheckCircle className="h-4 w-4" />
-                                </Button>
+                            {/* Lógica para ERRO RG: Prioridade sobre tudo */}
+                            {(prestador.status === "erro_rg" || (prestador.status === "reprovado" && prestador.observacoes?.includes('[ERRO RG]'))) ? (
+                              <Button
+                                onClick={() => handleNegarClick(solicitacao, prestador)}
+                                variant="outline"
+                                size="sm"
+                                className="h-7 px-2 border-orange-600 text-orange-600 hover:bg-orange-50 w-full"
+                                title="Devolver para solicitante"
+                              >
+                                <span className="text-xs font-semibold">Devolver</span>
+                              </Button>
+                            ) :
+                              (statusLiberacao === "pendente" || statusLiberacao === "urgente" || statusLiberacao === "negada") ? (
+                                <div className="flex items-center justify-center gap-2">
+                                  {(statusLiberacao === "pendente" || statusLiberacao === "urgente") && (
+                                    <Button
+                                      onClick={() => handleConfirmarCadastro(solicitacao, prestador)}
+                                      size="sm"
+                                      disabled={!((prestador.status as string) === "aprovado" || prestador.status === "aprovada")}
+                                      className={`h-7 w-7 p-0 text-white ${!((prestador.status as string) === "aprovado" || prestador.status === "aprovada")
+                                        ? "bg-green-600 opacity-40 cursor-not-allowed"
+                                        : "bg-green-600 hover:bg-green-700"
+                                        }`}
+                                      title={
+                                        !((prestador.status as string) === "aprovado" || prestador.status === "aprovada")
+                                          ? "Checagem precisa estar Aprovada para liberar"
+                                          : "Aprovar liberação"
+                                      }
+                                    >
+                                      <CheckCircle className="h-4 w-4" />
+                                    </Button>
+                                  )}
 
-                                {/* Botão Negar (Vermelho) */}
-                                <Button
-                                  onClick={() => handleNegarClick(solicitacao, prestador)}
-                                  variant="outline"
-                                  size="sm"
-                                  disabled={!((prestador.status as string) === "aprovado" || prestador.status === "aprovada")}
-                                  className={`h-7 w-7 p-0 border-red-600 text-red-600 ${!((prestador.status as string) === "aprovado" || prestador.status === "aprovada")
+                                  {/* Botão Negar (Vermelho) */}
+                                  <Button
+                                    onClick={() => handleNegarClick(solicitacao, prestador)}
+                                    variant="outline"
+                                    size="sm"
+                                    disabled={!((prestador.status as string) === "aprovado" || prestador.status === "aprovada")}
+                                    className={`h-7 w-7 p-0 border-red-600 text-red-600 ${!((prestador.status as string) === "aprovado" || prestador.status === "aprovada")
                                       ? "opacity-40 cursor-not-allowed"
                                       : "hover:bg-red-50"
-                                    }`}
-                                  title={
-                                    !((prestador.status as string) === "aprovado" || prestador.status === "aprovada")
-                                      ? "Checagem precisa estar Aprovada para negar"
-                                      : "Negar liberação"
-                                  }
-                                >
-                                  <XCircle className="h-4 w-4" />
-                                </Button>
-                              </div>
-                            ) : (
-                              <div className="flex items-center justify-center text-slate-400 text-xs italic">
-                                -
-                              </div>
-                            )}
+                                      }`}
+                                    title={
+                                      !((prestador.status as string) === "aprovado" || prestador.status === "aprovada")
+                                        ? "Checagem precisa estar Aprovada para negar"
+                                        : "Negar liberação"
+                                    }
+                                  >
+                                    <XCircle className="h-4 w-4" />
+                                  </Button>
+                                </div>
+                              ) : (
+                                <div className="flex items-center justify-center text-slate-400 text-xs italic">
+                                  -
+                                </div>
+                              )}
 
                             {/* Mensagem de sucesso */}
                             {
@@ -1225,7 +1251,9 @@ export default function TodasSolicitacoes() {
           <DialogContent className="sm:max-w-md">
             <DialogHeader>
               <DialogTitle className="text-lg font-semibold text-slate-800 flex items-center gap-2">
-                🔴 Negar Liberação
+                {prestadorSelecionado?.prestador.status === "erro_rg" || (prestadorSelecionado?.prestador.status === "reprovado" && prestadorSelecionado?.prestador.observacoes?.includes('[ERRO RG]'))
+                  ? "↩️ Devolver Solicitação"
+                  : "🔴 Negar Liberação"}
               </DialogTitle>
             </DialogHeader>
 
