@@ -1,4 +1,3 @@
-
 // 🔄 Sincronizador ID Control - Perfil HEBRAICA (Smart Sync)
 // Executar: node scripts/sync-id-control-hebraica.js
 
@@ -109,15 +108,14 @@ async function loginIdControl() {
 
 async function fetchAllUsers() {
     try {
-        console.log("   📥 Baixando lista completa de usuários (POST /api/user/list)...");
-        // Endpoint correto descoberto via probe (POST com body vazio)
-        const r = await fetch(`${ID_CONTROL_URL}/api/user/list`, {
-            method: "POST",
+        logDebug("   📥 Baixando lista completa de usuários (GET /api/users)...");
+        // Endpoint correto baseado em debug-users-list.js
+        const r = await fetch(`${ID_CONTROL_URL}/api/users?page=0&size=5000`, {
+            method: "GET",
             headers: {
                 "Authorization": `Bearer ${sessionToken}`,
                 "Content-Type": "application/json"
-            },
-            body: JSON.stringify({})
+            }
         });
         if (r.ok) {
             const d = await r.json();
@@ -171,7 +169,9 @@ async function createUser(payload) {
 
         const data = await response.json();
         return data.id || data;
+        return data.id || data;
     } catch (e) {
+        logDebug("❌ Erro createUser full: " + e.message);
         throw e;
     }
 }
@@ -201,7 +201,12 @@ async function syncHebraica() {
         .order('updated_at', { ascending: false })
         .limit(10);
 
-    if (error || !prestadores || prestadores.length === 0) {
+    if (error) {
+        console.error("❌ Erro Supabase:", error);
+        return;
+    }
+
+    if (!prestadores || prestadores.length === 0) {
         console.log("💤 Nada para processar.");
         return;
     }
@@ -259,9 +264,9 @@ async function syncHebraica() {
             // Placeholder for similarity calculation (replace with actual logic if available)
             const similarity = checkNameSimilarity(p.nome, userFound.name) ? 1.0 : 0.0; // This makes it behave like the old boolean check
 
-            if (similarity < 0.6) { // This condition will be true if checkNameSimilarity returns false with the placeholder
+            if (similarity < 0.6) {
                 console.log(`       xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx`);
-                console.log(`       � NOME DIFERENTE! Bloqueando atualização.`);
+                console.log(`       🚫 NOME DIFERENTE! Bloqueando atualização.`);
                 console.log(`       Nome no Banco: "${userFound.name}"`); // Changed 'user' to 'userFound'
                 console.log(`       Nome Solicitado: "${p.nome}"`);
                 console.log(`       Similaridade: ${(similarity * 100).toFixed(0)}%`);
@@ -284,12 +289,6 @@ async function syncHebraica() {
                     console.log(`       ⚠️ Usuário do banco SEM CPF. Solicitante COM CPF.`);
                     console.log(`       🗑️ Removendo RG do usuário antigo para liberar para o novo...`);
 
-                    // Update no usuário antigo para remover RG
-                    // Precisamos fazer um PUT /users/{id} apenas limpando o RG
-                    // const payloadLimpeza = { ...userFound, rg: "" }; // Ou null, dependendo da API
-                    // Obs: O endpoint de update precisa dos campos obrigatórios. 
-                    // Vamos tentar enviar apenas o RG vazio se a API suportar PATCH, senão o user todo.
-                    // Como não temos certeza do PATCH, vamos tentar update normal mantendo os dados
                     try {
                         // The original code snippet had `await updateUser({ ...user, rg: `OLD_${user.rg}_${Date.now()}` }, user.id);`
                         // and `await axiosInstance.put(`/users/${user.id}`, { ...user, rg: `FILA_${user.rg}_${Date.now()}`, ... });`
@@ -302,9 +301,6 @@ async function syncHebraica() {
                         const newId = await processarCreate(p);
                         if (newId) {
                             console.log(`       ✅ Novo usuário criado com ID: ${newId}.`);
-                            // Atualizar Supabase com o novo ID remoto?
-                            // O sync normal faria isso na próxima passada ou se processarCreate retornar ID.
-                            // Vamos garantir que o ID seja salvo.
                             await supabase.from('prestadores').update({
                                 id_controle: newId,
                                 status: 'pendente', // Resetar status para pendente (pois foi criado agora)
@@ -319,7 +315,7 @@ async function syncHebraica() {
                         continue; // Skip the rest of the loop for this "found" user path, as we handled it.
 
                     } catch (errLimpeza) {
-                        console.error("       ❌ Erro ao liberar RG:", errLimpeza.message);
+                        console.error("       ❌ Erro ao liberar RG: " + errLimpeza.message);
                         throw errLimpeza; // Bloqueia tudo se der erro
                     }
 
@@ -336,7 +332,7 @@ async function syncHebraica() {
 
                     // The original snippet had `return user;` and `throw new Error("BLOCK_UPDATE_NAME_MISMATCH");`
                     // To prevent the update and move to the next prestador, `continue` is appropriate.
-                    console.log(`   📝 Status atualizado para 'reprovado' (com flag [ERRO RG]). Pulando...`);
+                    console.log(`   📝 Status atualizado para 'reprovado' [ERRO RG]. Pulando...`);
                     continue;
                 }
             }

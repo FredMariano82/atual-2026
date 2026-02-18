@@ -1,0 +1,56 @@
+🔐 Autenticando...
+Testing POST /api/user/list... Body: {"active":true}Status: 400Response Error: <?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//E
+Testing POST /api/user/list... Body: {"deleted":false}Status: 400Response Error: <?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//E
+Testing POST /api/user/list... Body: {"search":""}Status: 400Response Error: <?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//E
+Testing POST /api/user/list... Body: {"pagination":{"page":0,"size":10}}Status: 400Response Error: <?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//E
+Testing POST /api/user/search... Body: {}Status: 405Response Error: <?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//E
+Testing POST /api/users/search... Body: {}Status: 405Response Error: <?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//E
+Testing GET /api/user?size=10... Body: undefinedStatus: 405Response Error: <?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//E
+Testing GET /api/users?size=10... Body: undefinedStatus: 404Response Error: Not Found
+Testing POST /api/user/query... Body: {}Status: 405Response Error: <?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//E🔐 Autenticando...
+Testing POST /api/user/list... Body: {"active":true}Status: 400Response Error: <?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//E
+Testing POST /api/user/list... Body: {"deleted":false}Status: 400Response Error: <?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//E
+Testing POST /api/user/list... Body: {"search":""}Status: 400Response Error: <?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//E
+Testing POST /api/user/list... Body: {"pagination":{"page":0,"size":10}}Status: 400Response Error: <?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//E
+Testing POST /api/user/search... Body: {}Status: 405Response Error: <?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//E
+Testing POST /api/users/search... Body: {}Status: 405Response Error: <?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//E
+Testing GET /api/user?size=10... Body: undefinedStatus: 405Response Error: <?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//E
+Testing GET /api/users?size=10... Body: undefinedStatus: 404Response Error: Not Found
+Testing GET /api/util/getAllUndeletedIds/Users... Body: undefinedStatus: 200Length: 6422Sample: 9135
+Testing GET /api/util/getUpdatedSince/Users?date=1970-01-01T00:00:00... Body: undefinedStatus: 404Response Error: <?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//E
+Testing POST /api/util/load/Users... Body: {"ids":[10023165]}Status: 404Response Error: <?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//E🔐 Autenticando...
+Testing POST /api/user/list... Body: {"active":true}Status: 400Response Error: <?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//E
+Testing POST /api/user/list... Body: {"deleted":false}Status: 400Response Error: <?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//E
+Testing POST /api/user/list... Body: {"search":""}Status: 400Response Error: <?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//E
+Testing POST /api/user/list... Body: {"pagination":{"page":0,"size":10}}Status: 400Response Error: <?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//E
+Testing POST /api/user/search... Body: {}Status: 405Response Error: <?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//E
+Testing POST /api/users/search... Body: {}Status: 405Response Error: <?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//E
+Testing GET /api/user?size=10... Body: undefinedStatus: 405Response Error: <?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//E
+Testing GET /api/users?size=10... Body: undefinedStatus: 404Response Error: Not Found
+Testing GET /api/util/getAllUndeletedIds/Users... Body: undefinedStatus: 200Length: 6422Sample: 9135
+Testing POST /api/util/load... Body: {"entity":"Users","ids":[10023165]}Status: 404Response Error: <?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//E

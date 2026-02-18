@@ -1,0 +1,25 @@
+🔍 Encontrados: 0 prestadores.
+💤 Nada para processar.
+🔍 Encontrados: 2 prestadores.
+   - ID: 4b36cbfe-7ff8-4850-b956-99bf184f06c5 | Nome: Antonio Luiz | Status: reprovado
+   - ID: aab90062-e0c8-42b5-b164-979dab33cb28 | Nome: Gilson | Status: pendente
+🔍 Encontrados: 2 prestadores.
+   - ID: 4b36cbfe-7ff8-4850-b956-99bf184f06c5 | Nome: Antonio Luiz | Status: reprovado
+   - ID: aab90062-e0c8-42b5-b164-979dab33cb28 | Nome: Gilson | Status: reprovado
+   📦 Lista carregada: 0 usuários.
+🔍 Encontrados: 2 prestadores.
+   - ID: 4b36cbfe-7ff8-4850-b956-99bf184f06c5 | Nome: Antonio Luiz | Status: reprovado
+   - ID: aab90062-e0c8-42b5-b164-979dab33cb28 | Nome: Gilson | Status: reprovado
+   ❌ Erro 400 ao baixar lista.
+🔍 Encontrados: 2 prestadores.
+   - ID: 4b36cbfe-7ff8-4850-b956-99bf184f06c5 | Nome: Antonio Luiz | Status: reprovado
+   - ID: aab90062-e0c8-42b5-b164-979dab33cb28 | Nome: Gilson | Status: reprovado
+   📥 Baixando lista completa de usuários (GET /api/users)...
+   ❌ Erro 404 ao baixar lista.
+🔍 Encontrados: 2 prestadores.
+   - ID: 4b36cbfe-7ff8-4850-b956-99bf184f06c5 | Nome: Antonio Luiz | Status: reprovado
+   - ID: aab90062-e0c8-42b5-b164-979dab33cb28 | Nome: Gilson | Status: reprovado
+   📥 Baixando lista completa de usuários (GET /api/users)...
+   ❌ Erro 404 ao baixar lista.
+❌ Erro createUser full: Erro 400: {"code":400,"error":"RG já cadastrado em outro usuário","stack":"   em ControliD.iDSecure.db.Users.Validate(DbConnection db)\r\n   em ControliD.iDSecure.db.DAL.Save[T](DbConnection cnT, T obj, Int64 idOperator, Boolean lTry, Boolean isPathUpdate)\r\n   em ControliD.iDSecure.db.DAL.Save[T](T obj, Int64 idOperator, Boolean lTry, Boolean isPathUpdate)\r\n   em ControliD.iDSecure.db.DALWebAPI`1.Insert(T obj)"}
+❌ Erro createUser full: Erro 400: {"code":400,"error":"RG já cadastrado em outro usuário","stack":"   em ControliD.iDSecure.db.Users.Validate(DbConnection db)\r\n   em ControliD.iDSecure.db.DAL.Save[T](DbConnection cnT, T obj, Int64 idOperator, Boolean lTry, Boolean isPathUpdate)\r\n   em ControliD.iDSecure.db.DAL.Save[T](T obj, Int64 idOperator, Boolean lTry, Boolean isPathUpdate)\r\n   em ControliD.iDSecure.db.DALWebAPI`1.Insert(T obj)"}
