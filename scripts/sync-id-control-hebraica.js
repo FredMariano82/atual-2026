@@ -445,7 +445,6 @@ async function processarCreate(p) {
     const payload = {
         name: p.nome,
         rg: p.documento.replace(/[^a-zA-Z0-9]/g, ""),
-        cpf: p.documento2 ? p.documento2.replace(/[^a-zA-Z0-9]/g, "") : "", // 🆕 ADDED CPF
         comments: validaAte ? `checagem válida até ${validaAte}` : "",
         idArea: 1, // Default
         idType: 0  // Default
